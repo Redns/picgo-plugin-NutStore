@@ -33,16 +33,16 @@ const config = (ctx) => {
             type: 'input',
             alias: 'sndId',
             default: userConfig.sndId || '',
-            message: 'sndId不能为空!',
-            required: true
+            message: '初次安装后自动获取, 请勿填写!',
+            required: false
         },
         {
             name: 'sndMagic',
             type: 'input',
             alias: 'sndMagic',
             default: userConfig.sndMagic || '',
-            message: 'sndMagic不能为空!',
-            required: true
+            message: '初次安装后自动获取, 请勿填写!',
+            required: false
         },
         {
             name: 'encrypt',
@@ -59,10 +59,10 @@ const config = (ctx) => {
 /*
  *  获取登录所需要的相关信息请求
  */
-const ticketRequestConstruct = (userConfig) => {
+const ticketRequestConstruct = (email) => {
     return {
         'method': 'GET',
-        'url': 'https://www.jianguoyun.com/d/ajax/getLoginCaptcha?un=' + userConfig.email,
+        'url': 'https://www.jianguoyun.com/d/ajax/getLoginCaptcha?un=' + email,
         'headers': {
           'Cookie': 'referrer=https://www.jianguoyun.com/'
         }
@@ -73,7 +73,7 @@ const ticketRequestConstruct = (userConfig) => {
 /*
  * 登录请求
 */
-const loginRequestConstruct = (userConfig, ticketResponse) => {
+const loginRequestConstruct = (email, password, ticketResponse) => {
     return {
         'method': 'POST',
         'url': 'https://www.jianguoyun.com/d/login',
@@ -83,8 +83,8 @@ const loginRequestConstruct = (userConfig, ticketResponse) => {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         form: {
-          'login_email': userConfig.email,
-          'login_password': userConfig.password,
+          'login_email': email,
+          'login_password': password,
           'remember_me': 'on',
           'login_dest_uri': '/d/home',
           'custom_ticket': ticketResponse.custom_ticket,
@@ -99,19 +99,30 @@ const loginRequestConstruct = (userConfig, ticketResponse) => {
 /*
  * 上传文件请求
 */
-const uploadRequestConstruct = (userConfig, filename, extname, img) => {
+const uploadRequestConstruct = (sndId, sndMagic, email, encrypt, filename, extname, img) => {
     return {
         'method': 'POST',
-        'url': 'https://www.jianguoyun.com/d/ajax/fileops/uploadXHRV2?path=/&dirName=/&sndId=' + userConfig.sndId + '&sndMagic=' + userConfig.sndMagic + '&name=' + filename,
+        'url': 'https://www.jianguoyun.com/d/ajax/fileops/uploadXHRV2?path=/&dirName=/&sndId=' + sndId + '&sndMagic=' + sndMagic + '&name=' + filename,
         'headers': {
           'Origin': 'https://www.jianguoyun.com',
           'Referer': 'https://www.jianguoyun.com/',
-          'Cookie': 'umn=' + userConfig.email + '; ta=' + userConfig.encrypt,
+          'Cookie': 'umn=' + email + '; ta=' + encrypt,
           'Content-Type': 'image/' + extname.slice(1)
         },
         body: img
       }
 }
+
+
+const sndRequestConstruct = (email, encrypt) => {
+    return {
+        'method': 'GET',
+        'url': 'https://www.jianguoyun.com/d/ajax/userop/getUserInfo?start=1&_=1644581145082 ',
+        'headers': {
+          'Cookie': 'referrer=https://www.jianguoyun.com/; umn=' + email + '; ta=' + encrypt,
+        }
+    }
+} 
 
 
 const handle = async (ctx) => {
@@ -120,25 +131,35 @@ const handle = async (ctx) => {
     const email = userConfig.email
     const password = userConfig.password
     const dir = userConfig.dir
-    const sndId = userConfig.sndId
-    const sndMagic = userConfig.sndMagic
+    var sndId = userConfig.sndId
+    var sndMagic = userConfig.sndMagic
+    var encrypt = userConfig.encrypt
 
     if(!userConfig){
         throw new Error('请配置相关信息!')
     }       
-    if(userConfig.encrypt == ''){
+
+    var ticket
+    if(encrypt == ''){
         // 获取登录所需的ticket
-        const ticketRequest = ticketRequestConstruct(userConfig)
+        const ticketRequest = ticketRequestConstruct(email)
         const ticketResponse = await ctx.Request.request(ticketRequest)
-
-        // 登录以获取加密后的密码
+        const ticketResponseObject = JSON.parse(ticketResponse)
+        if(ticketResponseObject.exp){
+            ticket = ticketResponseObject
+        }
+        else{
+            ctx.log.error('获取ticket失败, 请检查您的帐号是否被封禁或限制!')
+        }    
+            
+        // 获取加密后的密码
         try{
-            const loginRequest = loginRequestConstruct(userConfig, JSON.parse(ticketResponse))
-            await ctx.Request.request(loginRequest, function(error, response){
-                if(response.statusCode == 302){
-                    // 获取加密后的密码
-                    const pass_enc = response.headers['set-cookie'][1].split(';')[0].split('=')[1]
-
+            const loginRequest = loginRequestConstruct(email, password, ticket)
+            await ctx.Request.request(loginRequest, function(err, loginResponse){
+                ctx.log.info(loginResponse)
+                ctx.log.info(loginResponse.headers)
+                if(loginResponse.statusCode == 302){
+                    encrypt = loginResponse.headers['set-cookie'][1].split(';')[0].split('=')[1]
                     // 保存设置
                     ctx.saveConfig({
                         'picBed.NutStore': {
@@ -147,19 +168,48 @@ const handle = async (ctx) => {
                             dir: dir,
                             sndId: sndId,
                             sndMagic: sndMagic,
-                            encrypt: pass_enc
+                            encrypt: encrypt
                         }
                     })
                 }
                 else{
-                    ctx.log.error('获取加密密码失败, 请检查你的账户状态!')
+                    ctx.log.error('获取加密密码失败, 请检查您的账户状态!')
                 }
-            })
+            })    
         }
         catch(err){
 
-        } 
+        }
     }
+
+    if((sndId == '') || (sndMagic == '')){
+        // 获取sndId和sndMagic
+        const sndRequest = sndRequestConstruct(email, encrypt)
+        const sndResponse = await ctx.Request.request(sndRequest)
+        const sndResponseObject = JSON.parse(sndResponse)
+        if(sndResponseObject.sandboxes){
+            for(var i in sndResponseObject.sandboxes){
+                if(sndResponseObject.sandboxes[i].name == userConfig.dir){
+                    sndId = sndResponseObject.sandboxes[i].sandboxId
+                    sndMagic = sndResponseObject.sandboxes[i].magic
+                    // 保存设置
+                    ctx.saveConfig({
+                        'picBed.NutStore': {
+                            email: email,
+                            password: password,
+                            dir: dir,
+                            sndId: sndId,
+                            sndMagic: sndMagic,
+                            encrypt: encrypt
+                        }
+                    })
+                }
+            }
+        }
+        else{
+            ctx.log.error('获取sndKey和sndMagic失败, 请稍后重试或手动填写!')
+        }    
+    } 
 
     const imgList = ctx.output
     for(var i in imgList){
@@ -173,35 +223,37 @@ const handle = async (ctx) => {
             var myDate = new Date()
             var fileName = `${myDate.getFullYear()}${myDate.getMonth() + 1}${myDate.getDate()}${myDate.getHours()}${myDate.getMinutes()}${myDate.getSeconds()}`
 
-            const uploadRequest = uploadRequestConstruct(userConfig, fileName + imgList[i].extname, imgList[i].extname, img)
+            // 上传图片
+            const uploadRequest = uploadRequestConstruct(sndId, sndMagic, email, encrypt, fileName + imgList[i].extname, imgList[i].extname, img)
             const uploadResponse = await ctx.Request.request(uploadRequest)
-            const response = JSON.parse(uploadResponse)
-            if((response.tblUrl != null) && (response.tblUrl != '')){
+            const uploadResponseObject = JSON.parse(uploadResponse)
+            if(uploadResponseObject.tblUrl){
                 delete imgList[i].base64Image
                 delete imgList[i].buffer
-                const url = 'https://www.jianguoyun.com' + response.tblUrl + '/l'
-                    imgList[i]['imgUrl'] = url
-                }
-                else{
-                    ctx.log.error(err)
-                }
+                const url = 'https://www.jianguoyun.com' + uploadResponseObject.tblUrl + '/l'
+                imgList[i]['imgUrl'] = url
             }
-            catch(err){
-                if (err.error === 'Upload failed') {
-                    ctx.emit('notification', {
-                        title: '上传失败!',
-                        body: '请检查你的配置项是否正确'
-                    })
-                } 
-                else {
-                    ctx.emit('notification', {
-                        title: '上传失败!',
-                        body: '请检查你的配置项是否正确'
-                    })
-                }
-                throw err
+            else{
+                ctx.log.error('上传文件失败, 请检查文件名称是否规范或文件是否重复上传!')
             }
+        }
+        catch(err){
+            if (err.error === 'Upload failed') {
+                ctx.emit('notification', {
+                    title: '上传失败!',
+                    body: '请检查你的配置项是否正确'
+                })
+            } 
+            else {
+                ctx.emit('notification', {
+                    title: '上传失败!',
+                    body: '请检查你的配置项是否正确'
+                })
+            }
+            throw err
+        }    
     }
+    return ctx
 }
 
 
