@@ -1,12 +1,12 @@
 {
-  "name": "picgo-plugin-NutStore",
-  "version": "1.0.0",
+  "name": "picgo-plugin-nutstore",
+  "version": "1.0.1",
   "description": "基于坚果云的picgo插件",
   "main": "src/index.js",
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "",
+  "homepage": "https://github.com/Redns/picgo-plugin-NutStore",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "patch": "npm version patch && git push origin master && git push origin --tags",
