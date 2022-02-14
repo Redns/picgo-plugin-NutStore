@@ -1,5 +1,9 @@
 # picgo-plugin-NutStore
 
+![](https://img.shields.io/badge/version-1.1.7-green)
+
+<br>
+
 ## 简介
 
 [坚果云](https://www.jianguoyun.com) 是一款已稳定运营8年的同步网盘产品。您可以将电脑上的任意文件夹同步到坚果云，随时随地便捷地访问自己的文件、并安全地保存它们。坚果云目前分为`免费版`、`专业版`和`高级专业版`，详细的介绍请[点击](https://www.jianguoyun.com/s/pricing)。简单来说，免费版用户的权限如下：
@@ -57,13 +61,55 @@
 
 ## Q & A
 
-### 1.怎样解决获取 sndId 和 sndMagic 失败？
+### 1. 无法在picgo插件设置中安装/更新插件怎么办？
 
-`sndId`和`sndMagic`的获取依赖于加密后的密码`encrypt`，在极个别情况下（如：账户状态异常、网络不佳）可能会获取失败，此时您可以在设置中清除`encrypt`并重启`picgo`重试。若仍无法解决，请参照问题2
+##### 方法一：手动下载插件包
+
+1. 点击下载插件包，之后解压
+
+   ![image-20220214161623594](https://www.jianguoyun.com/c/dl-file/2022214161623.png?dt=r7acew&kv=bGppbmc0MzFAMTYzLmNvbQ&sd=ct2tt&ud=L_4Oe9leB4etqYQnIhJTyQz0uTlsofbu-Ll0L5bMHlk&vr=1)
+
+
+
+2. 打开`picgo`，选择插件设置中的`导入本地插件`
+
+   ![image-20220214161743353](https://www.jianguoyun.com/c/dl-file/2022214161743.png?dt=r7ach3&sd=ct2tt&kv=bGppbmc0MzFAMTYzLmNvbQ&vr=1&ud=bwfFcNHxEA0UVJEQzPb7018xa_QaO6d4a7vW0DFM5xQ)
+
+
+
+3. 选择第一步解压的插件包文件夹，等待安装完成！
+
+
+
+##### 方法二：更换镜像源
+
+由于作者的插件均发布于`npm`镜像源`https://registry.npm.org/`，若您的本地镜像源不是上述镜像源，那么您可能无法下载。
+
+1. 打开`picgo`，选择`picgo设置`、`设置代理和镜像地址`
+
+   ![image-20220214162212194](https://www.jianguoyun.com/c/dl-file/2022214162212.png?dt=r7acok&sd=ct2tt&kv=bGppbmc0MzFAMTYzLmNvbQ&vr=1&ud=W9uOAScsmOsV5MQNlvpIn4UVHLnorEb4HbuPcOzIsMM)
+
+
+
+2. 修改镜像
+
+   ![image-20220214162238060](https://www.jianguoyun.com/c/dl-file/2022214162238.png?dt=r7acpa&kv=bGppbmc0MzFAMTYzLmNvbQ&sd=ct2tt&ud=BTzADSVTNU_t14lwB2JRAYBvIPlnol51clwO59hzAGk&vr=1)
+
+
+
+3. 重启`picgo`即可！
+
+
+
+
+
+### 2. sndId 和 sndMagic 失败怎么办？
+
+`sndId`和`sndMagic`的获取依赖于加密后的密码`encrypt`，在极个别情况下（如：账户状态异常、网络不佳）可能会获取失败，此时您可以在设置中清除`encrypt`并重启`picgo`重试。若仍无法解决，请参照问题3
 
 <br>
 
-### 2.如何手动获取 sndId 和 sndMagic
+### 3. 如何手动获取 sndId 和 sndMagic
 
 1. 浏览器登录`坚果云`
 
