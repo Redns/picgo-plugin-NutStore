@@ -87,7 +87,7 @@
 
 1. 打开`picgo`，选择`picgo设置`、`设置代理和镜像地址`
 
-   ![image-20220214162837179](https://i.postimg.cc/cs8HcKXh/2022214162837.png?dl=1)
+   ![image-20220214162837179](C:\Users\LJ\AppData\Roaming\Typora\typora-user-images\image-20220214162837179.png)
 
 
 

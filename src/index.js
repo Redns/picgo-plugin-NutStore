@@ -241,19 +241,23 @@ const handle = async (ctx) => {
             const uploadResponse = await ctx.Request.request(uploadRequest)
             const uploadResponseObject = JSON.parse(uploadResponse)
             if(uploadResponseObject.tblUrl){
-                // 获取下载链接
-                const getDownloadUrlRequest = getDownloadUrlRequestConstruct(sndId, sndMagic, fileName + imgList[i].extname, email, encrypt)
-                const getDownloadUrlResponse = await ctx.Request.request(getDownloadUrlRequest)
-                const getDownloadUrlResponseObject = JSON.parse(getDownloadUrlResponse)
-                if(getDownloadUrlResponseObject.url){
-                    delete imgList[i].base64Image
-                    delete imgList[i].buffer
-                    const url = 'https://www.jianguoyun.com' + getDownloadUrlResponseObject.url
-                    imgList[i]['imgUrl'] = url
-                }
-                else{
-                    ctx.log.err('获取坚果云图片下载链接失败, 请稍后重试')
-                }
+                // // 获取下载链接
+                // const getDownloadUrlRequest = getDownloadUrlRequestConstruct(sndId, sndMagic, fileName + imgList[i].extname, email, encrypt)
+                // const getDownloadUrlResponse = await ctx.Request.request(getDownloadUrlRequest)
+                // const getDownloadUrlResponseObject = JSON.parse(getDownloadUrlResponse)
+                // if(getDownloadUrlResponseObject.url){
+                //     delete imgList[i].base64Image
+                //     delete imgList[i].buffer
+                //     const url = 'https://www.jianguoyun.com' + getDownloadUrlResponseObject.url
+                //     imgList[i]['imgUrl'] = url
+                // }
+                // else{
+                //     ctx.log.err('获取坚果云图片下载链接失败, 请稍后重试')
+                // }
+                delete imgList[i].base64Image
+                delete imgList[i].buffer
+                const url = 'https://www.jianguoyun.com' + uploadResponseObject.tblUrl + '/l'
+                imgList[i]['imgUrl'] = url
             }
             else{
                 ctx.log.error('上传文件失败, 请检查文件名称是否规范或文件是否重复上传!')
