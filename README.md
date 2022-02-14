@@ -87,7 +87,7 @@
 
 1. 打开`picgo`，选择`picgo设置`、`设置代理和镜像地址`
 
-   ![image-20220214162212194](https://www.jianguoyun.com/c/dl-file/2022214162212.png?dt=r7acok&sd=ct2tt&kv=bGppbmc0MzFAMTYzLmNvbQ&vr=1&ud=W9uOAScsmOsV5MQNlvpIn4UVHLnorEb4HbuPcOzIsMM)
+   ![image-20220214162837179](https://i.postimg.cc/cs8HcKXh/2022214162837.png?dl=1)
 
 
 
