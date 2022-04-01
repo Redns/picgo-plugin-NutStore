@@ -111,7 +111,9 @@
 
 1. 浏览器登录 `坚果云`
 
-2. ![image-20220401225854900](http://jing-image.test.upcdn.net/image-20220401225854900.png)
+2. 打开存储图片的文件夹，查看文件夹链接
+
+   ![image-20220401225854900](http://imagebed.krins.cloud/api/image/1648854409613.png)
 
 <br>
 
