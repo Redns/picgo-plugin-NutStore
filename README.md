@@ -119,7 +119,7 @@
 
 <br>
 
-### 4.上传失败，显示 StatusCodeError400
+### 4. 上传失败，显示 StatusCodeError400
 
 报错信息示例如下，详情可参考此 [Issuse](https://github.com/Redns/picgo-plugin-NutStore/issues/2)：
 
