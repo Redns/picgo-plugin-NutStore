@@ -93,7 +93,7 @@
 
 2. 修改镜像
 
-   ![image-20220214162238060](https://www.jianguoyun.com/c/dl-file/2022214162238.png?dt=r7acpa&kv=bGppbmc0MzFAMTYzLmNvbQ&sd=ct2tt&ud=BTzADSVTNU_t14lwB2JRAYBvIPlnol51clwO59hzAGk&vr=1)
+   ![image-20220401230458745](http://jing-image.test.upcdn.net/image-20220401230458745.png)
 
 <br>
 
