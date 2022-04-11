@@ -1,7 +1,7 @@
 # picgo-plugin-NutStore
 
 ![](https://img.shields.io/badge/version-1.1.7-green)
-
+> 从坚果云获取的图片外链均存在有效期，因此请不要再使用该插件！
 <br>
 
 ## 简介
